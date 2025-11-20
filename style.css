@@ -1,0 +1,207 @@
+/* === Layout === */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body {
+  background: radial-gradient(circle at top, #151b2c 0%, #05060a 60%, #020308 100%);
+  color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px 16px 40px;
+}
+
+/* === Header === */
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.header h1 {
+  font-size: 2.1rem;
+  font-weight: 650;
+  margin-bottom: 6px;
+}
+
+.subtitle {
+  font-size: 0.95rem;
+  color: #c4c7d1;
+}
+
+/* === Controls === */
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0 10px;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 220px;
+}
+
+.control-group label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #9aa0b5;
+}
+
+#metric-select,
+#year-slider {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid #2c3348;
+  background: #111522;
+  color: #f5f5f5;
+}
+
+#year-slider {
+  cursor: pointer;
+}
+
+/* === Globe Container === */
+
+#globe-container {
+  position: relative;
+  margin: 0 auto;
+  max-width: 780px;
+  aspect-ratio: 1 / 1;
+}
+
+/* SVG fills the container via viewBox */
+#globe {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* === Globe styling === */
+
+.water {
+  fill: #081220;
+}
+
+.graticule {
+  fill: none;
+  stroke: #20293a;
+  stroke-width: 0.5;
+  stroke-opacity: 0.6;
+}
+
+.land {
+  fill: #151a27;         /* darker than country colors */
+  stroke: #272e3c;
+  stroke-width: 0.5;
+}
+
+.country {
+  cursor: pointer;
+  fill: #374760;
+  transition: stroke-width 0.15s ease, stroke 0.15s ease, opacity 0.15s ease;
+}
+
+.country:hover {
+  stroke-width: 0.8;
+  opacity: 0.95;
+  fill: #4a5a7a;
+}
+
+
+/* === Tooltip === */
+
+.tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: rgba(6, 10, 20, 0.95);
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 0.75rem;
+  color: #f5f5f5;
+  border: 1px solid #2d3952;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+  max-width: 220px;
+  line-height: 1.3;
+  z-index: 10;
+}
+
+.tooltip-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: #f5f5f5;
+}
+
+.tooltip-metric {
+  color: #d1d7f5;
+}
+
+.tooltip-value {
+  font-weight: 600;
+  color: #ffdd7b;
+}
+
+/* === Legend === */
+
+#legend {
+  position: absolute;
+  bottom: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 260px;
+  background: rgba(7, 11, 22, 0.9);
+  border-radius: 10px;
+  padding: 8px 10px;
+  border: 1px solid #29344c;
+  backdrop-filter: blur(4px);
+}
+
+.legend-title {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #a4abc7;
+  margin-bottom: 6px;
+}
+
+.legend-bar {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background-image: linear-gradient(to right, #171c2b, #433c8f, #2569b3, #25a17c, #b8e986);
+  margin-bottom: 4px;
+}
+
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: #c4cadf;
+}
+
+/* === Responsiveness === */
+
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 1.6rem;
+  }
+
+  #legend {
+    width: 230px;
+    bottom: 12px;
+  }
+}
