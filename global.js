@@ -47,11 +47,17 @@ const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
   const annotationGroup = svg.append("g").attr("id", "annotation-group");
 
   // Regions for steps
+  // Regions for steps (approximate lon, lat)
   const regionAnnotations = [
-    { step: 0, name: "Sub-Saharan Africa",    coords: [20, 0] },
-    { step: 1, name: "South Asia",            coords: [80, 20] },
-    { step: 2, name: "Europe & Central Asia", coords: [15, 50] },
+    { step: 0, name: "Africa",                      coords: [20, 5] },
+    { step: 1, name: "Asia",                        coords: [90, 30] },
+    { step: 2, name: "Middle East & North Africa",  coords: [35, 25] },
+    { step: 3, name: "Europe",                      coords: [15, 50] },
+    { step: 4, name: "Latin America & the Caribbean", coords: [-70, -10] },
+    { step: 5, name: "Northern America",            coords: [-100, 40] },
+    { step: 6, name: "Oceania",                     coords: [140, -25] },
   ];
+
 
   let countries = [];
 
@@ -59,7 +65,7 @@ const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
     .then(world => {
       countries = topojson.feature(world, world.objects.countries).features;
 
-      countriesLayer
+    countriesLayer
         .selectAll("path")
         .data(countries)
         .join("path")
@@ -69,9 +75,10 @@ const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
         .attr("stroke", "white")
         .attr("stroke-width", 0.3);
 
-      addDrag();
-      startRotation();
+      addDrag();    // you can still drag manually
+      // No auto-rotation for scrolly globe
       initScrolly();
+
     })
     .catch(err => console.error("Scrolly globe world load error:", err));
 
