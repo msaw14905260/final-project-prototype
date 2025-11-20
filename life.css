@@ -1,0 +1,222 @@
+#life-path {
+  background: linear-gradient(
+    to bottom,
+    #05070f 0%,
+    #ffffff 100%
+  );
+  padding: 120px 0;
+  color: #222;
+  
+}
+
+h1 {
+ font-size: 2.1rem;
+ margin-bottom: 0.5rem;
+}
+
+.lede {
+ max-width: 720px;
+ font-size: 0.95rem;
+ line-height: 1.6;
+ color: #444;
+}
+
+.controls {
+ display: flex;
+ flex-wrap: wrap;
+ gap: 1rem;
+ margin-top: 1.25rem;
+ align-items: center;
+}
+
+.controls label {
+ font-size: 0.9rem;
+ display: flex;
+ flex-direction: column;
+ gap: 0.35rem;
+}
+
+.controls select {
+ padding: 0.35rem 0.6rem;
+ border-radius: 999px;
+ border: 1px solid #ddd;
+ background: #fff;
+ font-size: 0.9rem;
+}
+
+.gender-toggle {
+ display: inline-flex;
+ gap: 0.3rem;
+ padding: 0.2rem;
+ border-radius: 999px;
+ background: #ffe9f5;
+} 
+
+.gender-toggle button {
+ border: none;
+ padding: 0.4rem 0.9rem;
+ border-radius: 999px;
+ font-size: 0.9rem;
+ cursor: pointer;
+ background: transparent;
+ color: #c03c72;
+}
+
+.gender-toggle button.active {
+ background: #ffb9dd;
+ color: #4b1230;
+}
+
+
+.stage-track-wrapper {
+ margin-top: 2.5rem;
+}
+
+.stage-track-wrapper h2 {
+ font-size: 1.3rem;
+ margin-bottom: 0.75rem;
+}
+
+.stage-track {
+ display: flex;
+ gap: 0.75rem;
+ overflow-x: auto;
+ padding: 0.75rem 0.25rem 0.5rem;
+}
+
+.stage-node {
+ min-width: 110px;
+ text-align: center;
+ cursor: pointer;
+ position: relative;
+}
+
+.stage-node-circle {
+ width: 44px;
+ height: 44px;
+ border-radius: 999px;
+ margin: 0 auto 0.4rem;
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ background: #eee;
+ color: #555;
+ font-weight: 600;
+ border: 2px solid transparent;
+ transition: transform 150ms ease, box-shadow 150ms ease, border-color 150ms ease;
+}
+
+.stage-node-label {
+ font-size: 0.8rem;
+ color: #555;
+}
+
+.stage-node.active .stage-node-circle {
+ background: linear-gradient(135deg, #ffb8de, #8bb3ff);
+ color: #34111f;
+ border-color: #5a5ddf;
+ box-shadow: 0 0 0 3px rgba(136, 141, 255, 0.18);
+ transform: translateY(-2px);
+}
+
+.stage-node.completed .stage-node-circle {
+ border-style: solid;
+ border-color: #9dd8a0;
+}
+
+.stage-node:hover .stage-node-circle {
+ transform: translateY(-1px) scale(1.02);
+}
+
+
+.stage-panel {
+ margin-top: 2.2rem;
+}
+
+.stage-card {
+ background: #ffffff;
+ border-radius: 18px;
+ padding: 1.5rem 1.6rem 1.3rem;
+ box-shadow: 0 10px 26px rgba(30, 0, 60, 0.12);
+ border: 1px solid rgba(160, 130, 210, 0.25);
+}
+
+.stage-card h3 {
+ margin: 0 0 0.7rem;
+ font-size: 1.25rem;
+}
+
+.stage-text {
+ font-size: 0.95rem;
+ line-height: 1.7;
+ color: #444;
+ margin-bottom: 1.1rem;
+}
+
+
+
+.mini-chart {
+ width: 100%;
+ max-width: 420px;
+ margin-bottom: 1.2rem;
+}
+
+.mini-chart svg {
+ width: 100%;
+ height: auto;
+}
+
+
+
+.stage-nav {
+ display: flex;
+ justify-content: space-between;
+ gap: 0.75rem;
+}
+
+.stage-nav button {
+ flex: 1;
+ border-radius: 999px;
+ border: none;
+ padding: 0.5rem 0.9rem;
+ font-size: 0.9rem;
+ cursor: pointer;
+}
+
+#lp-prev-stage {
+ background: #f2edf9;
+ color: #4f327d;
+}
+
+#lp-prev-stage:disabled {
+ opacity: 0.45;
+ cursor: default;
+}
+
+#lp-next-stage {
+ background: linear-gradient(135deg, #ff8fc2, #7d8dff);
+ color: white;
+}
+
+
+.lp-tooltip {
+ position: absolute;
+ pointer-events: none;
+ background: #fff;
+ border-radius: 6px;
+ border: 1px solid #ddd;
+ font-size: 0.75rem;
+ padding: 0.3rem 0.5rem;
+}
+
+
+@media (max-width: 720px) {
+ .controls {
+ flex-direction: column;
+ align-items: flex-start;
+ }
+
+ .stage-card {
+ padding: 1.3rem 1.1rem 1.1rem;
+ }
+}

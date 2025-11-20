@@ -5,6 +5,7 @@
   <meta charset="UTF-8" />
   <title>Unequal Worlds</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="life.css" />
 
   <!-- D3 + TopoJSON -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -150,6 +151,80 @@
 
     </section>
   </div>
+
+
+
+
+  <!-- ================================
+     LIFE PATH STORY SECTION
+================================= -->
+<section id="life-path">
+  <div class="lp-wrapper">
+
+    <section class="intro">
+  <br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+      <h1 style="color: aliceblue;">Choose Your Life Path</h1>
+      <p class="lede" style="color: aliceblue;">
+        Pick a <strong>region</strong>, <strong>year</strong>, and <strong>gender</strong> to follow a typical life path.
+        At each stage, we show how your chances change based on the data.
+      </p>
+
+      <div class="controls">
+        <label>
+          Region
+          <select id="lp-region-select"></select>
+        </label>
+
+        <label>
+          Year
+          <select id="lp-year-select"></select>
+        </label>
+
+        <div class="gender-toggle" id="lp-gender-toggle">
+          <button type="button" data-gender="female" class="active">Girl</button>
+          <button type="button" data-gender="male">Boy</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="stage-track-wrapper">
+      <h2>Your Journey</h2>
+      <div id="lp-stage-track" class="stage-track"></div>
+    </section>
+
+    <section class="stage-panel">
+      <div class="stage-card">
+        <h3 id="lp-stage-title">Pick a path to begin</h3>
+        <p id="lp-stage-text" class="stage-text">
+          Select a region, year, and gender to start the journey.
+        </p>
+
+        <div id="lp-stage-mini-chart" class="mini-chart"></div>
+
+        <div class="stage-nav">
+          <button type="button" id="lp-prev-stage" disabled>Back</button>
+          <button type="button" id="lp-next-stage">Next stage ▶</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</section>
+
+
+<!-- ================================
+     LOAD LIFE-PATH MODULE SCRIPT
+================================= -->
+<script type="module" src="life.js"></script>
+
+  
 
   <!-- Scripts -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
