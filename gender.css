@@ -1,0 +1,94 @@
+/* Outer spacing so it sits nicely on the navy background */
+#school-gap-section {
+  max-width: 1100px;
+  margin: 80px auto 40px;
+  padding: 0 1.5rem;
+}
+
+/* Card container */
+#viz1-container {
+  background: radial-gradient(circle at top left, #141b3a 0, #050816 55%, #020308 100%);
+  padding: 24px 26px 30px;
+  border-radius: 24px;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.7);
+  border: 1px solid rgba(148, 163, 255, 0.35);
+  color: #e5e7f5;
+}
+
+#viz1-container svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Title + text */
+#viz1-container h2 {
+  margin-top: 0;
+  font-size: 1.8rem;
+  font-weight: 650;
+  color: #f9fafb;
+}
+
+.viz1-lede {
+  color: #cbd5f5;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 720px;
+  margin-bottom: 14px;
+}
+
+/* Controls */
+.viz1-controls {
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.viz1-controls label {
+  font-weight: 600;
+  margin-right: 8px;
+  font-size: 0.95rem;
+  color: #e5e7f5;
+}
+
+#decade-dropdown {
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  border-radius: 999px;
+  border: 1px solid #4b5563;
+  background: #020617;
+  color: #e5e7eb;
+  outline: none;
+}
+
+/* Legend */
+.legend {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  margin-bottom: 6px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #e5e7f5;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+}
+
+.girls { background: #ff82c6; }
+.boys { background: #6aa5ff; }
+
+/* Tooltip */
+.tooltip {
+  color: #0f172a;
+}

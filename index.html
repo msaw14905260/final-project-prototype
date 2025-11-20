@@ -6,6 +6,7 @@
   <title>Unequal Worlds</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="life.css" />
+  <link rel="stylesheet" href="gender.css" />
 
   <!-- D3 + TopoJSON -->
   <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -210,11 +211,38 @@
   </div>
 </section>
 
-
 <!-- ================================
-     LOAD LIFE-PATH MODULE SCRIPT
+     SCHOOL GAP BAR CHART SECTION
 ================================= -->
-<script type="module" src="life.js"></script>
+<section id="school-gap-section">
+  <div id="viz1-container">
+    <h2>Gender Gap in Secondary School Enrollment</h2>
+
+    <p class="viz1-lede">
+      Pink bars show where girls are more enrolled than boys; blue bars show where boys are ahead.
+      Choose a decade below to compare world regions.
+    </p>
+
+    <div class="viz1-controls">
+      <label for="decade-dropdown">Decade:</label>
+      <select id="decade-dropdown"></select>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color girls"></div> Girls ahead
+      </div>
+
+      <div class="legend-item">
+        <div class="legend-color boys"></div> Boys ahead
+      </div>
+    </div>
+
+    <!-- SVG will be injected here by gender.js -->
+  </div>
+</section>
+
+
 
   
 
@@ -222,6 +250,8 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="https://unpkg.com/topojson-client@3"></script>
   <script src="global.js"></script>
+<script type="module" src="life.js"></script>
+  <script type="module" src="gender.js"></script>
 </body>
 
 </html>
