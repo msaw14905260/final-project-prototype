@@ -1,12 +1,7 @@
 #life-path {
-  background: linear-gradient(
-    to bottom,
-    #05070f 0%,
-    #ffffff 100%
-  );
+    background: #fff;
   padding: 120px 0;
   color: #222;
-  
 }
 
 h1 {
