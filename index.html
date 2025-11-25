@@ -7,11 +7,8 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="life.css" />
   <link rel="stylesheet" href="gender.css" />
-
-  <!-- D3 + TopoJSON -->
-  <script src="https://d3.js.org/d3.v7.min.js"></script>
-  <script src="https://unpkg.com/topojson-client@3"></script>
 </head>
+
 
 <body>
   <div class="page">
@@ -59,53 +56,188 @@
       </div>
 
       <div class="steps">
+
+  <div id="explore-tooltip" class="explore-tooltip"></div>
+
+      
   <article class="step" data-step="0">
     <h2>Africa</h2>
-    <p>
-      Placeholder: key story about gender gaps in Africa (education, health, labor, etc.).
-    </p>
+    <p><strong>1960–1970:</strong> 
+<p>
+  In the 1960–1970 period across Sub-Saharan Africa, only about <strong>11%</strong> of secondary-school-age girls were enrolled
+  in secondary school, compared with roughly <strong>16%</strong> of boys. University was almost out of reach for most:
+  tertiary enrollment hovered around <strong>1%</strong> for women and <strong>2%</strong> for men. Women lived to about
+  <strong>44 years</strong> on average, just under <strong>3 years</strong> longer than men, while fertility was extremely high at
+  around <strong>6.7 births per woman</strong> and more than <strong>150 births per 1,000 teenage girls</strong>.
+</p>
+<br>
+
+<p><strong>2010–2020:</strong> 
+
+<p>
+  By 2010–2020, secondary enrollment had risen to about <strong>39%</strong> for girls and <strong>46%</strong> for boys, and tertiary
+  enrollment to roughly <strong>7.5%</strong> for women and <strong>10%</strong> for men—still a sizable gender and global gap.
+  Women’s life expectancy climbed to about <strong>61 years</strong>, about <strong>3–4 years</strong> longer than men’s, but fertility
+  remained high at around <strong>4.9 births per woman</strong> and over <strong>100 births per 1,000 teenage girls</strong>. Only a bit more
+  than <strong>half of births</strong> were attended by skilled health staff, highlighting persistent inequalities in health and
+  socio-economic conditions.
+</p>
+
   </article>
 
   <article class="step" data-step="1">
     <h2>Asia</h2>
-    <p>
-      Placeholder: describe how gender outcomes vary across Asian countries.
-    </p>
+    <p><strong>1960–1970:</strong> 
+<p>
+  In South Asia around 1960–1970, secondary education was heavily skewed toward boys: only about
+  <strong>13%</strong> of girls were in secondary school compared with more than <strong>32%</strong> of boys. At the university level, women’s
+  gross enrollment averaged under <strong>2%</strong> versus about <strong>7%</strong> for men. Women actually lived slightly shorter lives than
+  men (about <strong>44.5</strong> vs <strong>45.8</strong> years on average), while fertility was close to <strong>6 births per woman</strong> and
+  teen fertility exceeded <strong>115 births per 1,000 girls</strong>, reflecting early marriage and childbearing.
+</p>
+<br>
+
+<p><strong>2010–2020:</strong> 
+
+<p>
+  By 2010–2020, the picture had changed dramatically: secondary enrollment reached about <strong>66%</strong> for both girls and boys,
+  and the secondary gender gap nearly disappeared. Tertiary enrollment rose to roughly <strong>21%</strong> for women and
+  <strong>22%</strong> for men, narrowing the higher-education gap. Women’s life expectancy increased to about <strong>70 years</strong>,
+  now about <strong>2½ years longer</strong> than men’s, while fertility fell to around <strong>2.5 births per woman</strong> and teen fertility
+  dropped to about <strong>32 births per 1,000 girls</strong>. Still, only about <strong>62%</strong> of births were attended by skilled health staff,
+  showing ongoing inequities in maternal care.
+</p>
+
+
   </article>
 
   <article class="step" data-step="2">
     <h2>Middle East & North Africa</h2>
-    <p>
-      Placeholder: focus on MENA’s distinct patterns in education and labor.
-    </p>
+    <p><strong>1960–1970:</strong> 
+<p>
+  In the Middle East & North Africa during 1960–1970, secondary education was limited for everyone and especially
+  for girls: only about <strong>18%</strong> of girls were enrolled in secondary school compared with roughly <strong>35%</strong> of boys.
+  University participation stood at around <strong>4%</strong> for women versus <strong>8%</strong> for men. Women lived to about
+  <strong>50.5 years</strong> on average, about <strong>1½ years</strong> longer than men, while fertility averaged nearly
+  <strong>6.9 births per woman</strong> and teen fertility was very high at around <strong>135 births per 1,000 girls</strong>.
+</p>
+<br>
+
+<p><strong>2010–2020:</strong> 
+
+<p>
+  By 2010–2020, access to education had expanded dramatically: secondary enrollment reached about <strong>77%</strong> for girls and
+  <strong>81%</strong> for boys, and at the tertiary level women slightly <strong>outnumbered men</strong> (around <strong>38%</strong> vs <strong>37%</strong>
+  gross enrollment). Women’s life expectancy rose to about <strong>75 years</strong>, roughly <strong>3½ years</strong> longer than men’s,
+  while fertility fell to about <strong>2.9 births per woman</strong> and teen fertility to around <strong>40 births per 1,000 girls</strong>.
+  Nearly <strong>89%</strong> of births were attended by skilled health staff, signaling big improvements in maternal care even as
+  gender gaps persist in other domains.
+</p>
+
   </article>
 
   <article class="step" data-step="3">
     <h2>Europe</h2>
-    <p>
-      Placeholder: talk about where gaps have narrowed the most.
-    </p>
+    <p><strong>1960–1970:</strong> 
+<p>
+  In Europe & Central Asia in the 1960–1970 period, secondary schooling was already widespread: about
+  <strong>80%</strong> of girls and <strong>83%</strong> of boys were enrolled in secondary education. At the tertiary level, women’s gross
+  enrollment averaged around <strong>24%</strong> compared with about <strong>25%</strong> for men—relatively small gaps by global standards.
+  Women lived to about <strong>71.5 years</strong> on average, roughly <strong>6½ years longer</strong> than men, with fertility around
+  <strong>2.7 births per woman</strong> and teen fertility around <strong>41 births per 1,000 girls</strong>.
+</p>
+<br>
+
+<p><strong>2010–2020:</strong> 
+
+<p>
+  By 2010–2020, Europe & Central Asia had essentially universal secondary schooling, with gross enrollment
+  above <strong>100%</strong> for both girls and boys (reflecting older students in the system). The big shift is in higher education:
+  women’s tertiary enrollment climbed to about <strong>72%</strong>, compared with roughly <strong>61%</strong> for men, putting women
+  firmly ahead in university access. Women’s life expectancy rose to about <strong>81 years</strong> versus <strong>74 years</strong> for men, keeping
+  a gender gap of roughly <strong>6½ years</strong>, while fertility declined to about <strong>1.7 births per woman</strong> and teen fertility fell
+  below <strong>20 births per 1,000 girls</strong>. Nearly all births—around <strong>99%</strong>—were attended by skilled health staff.
+</p>
+
+
   </article>
 
   <article class="step" data-step="4">
     <h2>Latin America & the Caribbean</h2>
-    <p>
-      Placeholder: highlight progress and remaining inequities.
-    </p>
+    <p><strong>1960–1970:</strong> 
+<p>
+  In Latin America & the Caribbean in 1960–1970, only about <strong>27%</strong> of secondary-school-age girls and
+  <strong>29%</strong> of boys were in secondary school. At the tertiary level, gross enrollment averaged about <strong>5%</strong> for women
+  and <strong>9%</strong> for men. Women lived to around <strong>60.5 years</strong>, roughly <strong>4 years</strong> longer than men, while fertility was
+  high at roughly <strong>5.6 births per woman</strong> and teen fertility topped <strong>100 births per 1,000 girls</strong>.
+</p>
+<br>
+
+<p><strong>2010–2020:</strong> 
+
+<p>
+  By 2010–2020, the region had transformed its education landscape: secondary enrollment reached about
+  <strong>97%</strong> for girls versus <strong>91%</strong> for boys, and women pulled decisively ahead in higher education with
+  tertiary enrollment near <strong>54%</strong> compared to about <strong>42%</strong> for men. Women’s life expectancy rose to about
+  <strong>78 years</strong>, around <strong>6½ years</strong> longer than men’s, while fertility fell to roughly <strong>2.1 births per woman</strong>.
+  Teen fertility, though improved, remained high at about <strong>66 births per 1,000 girls</strong>. Around <strong>93%</strong> of births were
+  attended by skilled health staff, reflecting substantial but incomplete progress in health and socio-economic equity.
+</p>
+
   </article>
 
   <article class="step" data-step="5">
     <h2>Northern America</h2>
-    <p>
-      Placeholder: discuss persistent gaps in work, pay, or health.
-    </p>
+    <p><strong>1960–1970:</strong> 
+<p>
+  In North America during 1960–1970, detailed data on secondary gross enrollment are limited, but tertiary
+  education already showed a clear male advantage: university enrollment averaged about <strong>39%</strong> for women compared
+  with roughly <strong>56%</strong> for men. Women lived to about <strong>74 years</strong> on average, roughly <strong>7 years longer</strong> than men.
+  Fertility was near <strong>3 births per woman</strong>, and teen fertility was high at around <strong>69 births per 1,000 girls</strong>, reflecting
+  the post-war baby boom and limited reproductive autonomy.
+</p>
+<br>
+
+<p><strong>2010–2020:</strong> 
+
+<p>
+  By 2010–2020, secondary schooling had become nearly universal, with gross enrollment close to <strong>99%</strong> for both girls
+  and boys. The gender pattern in higher education flipped: women’s tertiary enrollment rose to about <strong>102%</strong> (gross)
+  versus roughly <strong>74%</strong> for men, meaning women are now far more likely to be in college or university. Women’s life
+  expectancy increased to about <strong>81.5 years</strong>, still about <strong>5 years</strong> longer than men’s, while fertility fell to
+  about <strong>1.8 births per woman</strong> and teen fertility dropped to around <strong>23 births per 1,000 girls</strong>. Nearly all births
+  (about <strong>99%</strong>) were attended by skilled health staff, underscoring high overall access to maternal care alongside
+  persistent gendered health risks for men.
+</p>
+
+
   </article>
 
   <article class="step" data-step="6">
     <h2>Oceania</h2>
-    <p>
-      Placeholder: describe patterns across Australia, New Zealand, and Pacific islands.
-    </p>
+    <p><strong>1960–1970:</strong> 
+<p>
+  In Oceania (averaging Australia and New Zealand) in 1960–1970, secondary education was already widespread:
+  roughly <strong>76%</strong> of girls and <strong>77%</strong> of boys were enrolled in secondary school. At the tertiary level, however,
+  men were much more likely to attend: women’s gross enrollment was about <strong>12%</strong> compared with about <strong>20%</strong>
+  for men. Women lived to around <strong>74 years</strong>, about <strong>6 years</strong> longer than men, while fertility averaged roughly
+  <strong>3.4 births per woman</strong> and teen fertility was about <strong>55 births per 1,000 girls</strong>.
+</p>
+<br>
+
+<p><strong>2010–2020:</strong> 
+
+<p>
+  By 2010–2020, secondary schooling reached very high levels for both genders, with gross enrollment exceeding
+  <strong>125%</strong> for girls and boys (again reflecting older students in the system). The biggest shift is in higher education:
+  women’s tertiary enrollment soared to about <strong>111%</strong>, far above men’s roughly <strong>78%</strong>, making women the clear majority
+  in university. Women’s life expectancy climbed to about <strong>84 years</strong>, about <strong>4 years</strong> longer than men, while
+  fertility fell below <strong>2 births per woman</strong> and teen fertility dropped to around <strong>17 births per 1,000 girls</strong>.
+  Almost all births—around <strong>98%</strong>—were attended by skilled health staff, reflecting strong health systems even as
+  gendered patterns in education and longevity continue to evolve.
+</p>
+
+
   </article>
 </div>
 
@@ -262,12 +394,14 @@
 
   
 
-  <!-- Scripts -->
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://unpkg.com/topojson-client@3"></script>
-  <script src="global.js"></script>
+<!-- Scripts -->
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="https://unpkg.com/topojson-client@3"></script>
+
+<script src="global.js"></script>
 <script type="module" src="life.js"></script>
-  <script type="module" src="gender.js"></script>
+<script type="module" src="gender.js"></script>
+
 </body>
 
 </html>

@@ -137,6 +137,14 @@ body {
   fill: #4a5a7a;
 }
 
+.country.highlight {
+  filter: drop-shadow(0 0 6px #ffd15c) brightness(1.3);
+  stroke: #ffd15c;
+  stroke-width: 1;
+}
+
+
+
 
 /* === Tooltip === */
 
@@ -280,40 +288,51 @@ body {
 }
 
 /* Steps on the right */
-
-.steps {
-  display: flex;
-  flex-direction: column;
-  gap: 60vh; /* big gaps so each step has screen time */
-}
-
-.step {
-  min-height: 60vh;
-  padding: 16px 18px;
+/* === SCROLLYTELLING STEP BOXES === */
+.steps .step {
+  background: rgba(20, 22, 35, 0.75);   /* dark semi-transparent */
+  color: #f8f9fc;                       /* off-white text */
+  padding: 1.4rem 1.6rem;
   border-radius: 12px;
-  background: rgba(10, 14, 28, 0.7);
-  border: 1px solid #252b3c;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
-  opacity: 0.4;
-  transition: opacity 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+  margin: 2rem 0;
+  max-width: 600px;
+  line-height: 1.55;
+  backdrop-filter: blur(6px);           /* frosted glass effect */
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+  transition: transform 0.3s ease, background 0.3s ease;
 }
 
-.step.is-active {
-  opacity: 1;
-  border-color: #4f7cff;
-  transform: translateY(-6px);
+/* Active step gets a stronger highlight */
+.steps .step.is-active {
+  background: rgba(32, 36, 55, 0.9);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-4px);
 }
 
-.step h2 {
-  margin: 0 0 8px;
-  font-size: 1.2rem;
+/* Headings inside step */
+.steps .step h2 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #ffe080; /* warm highlight color */
 }
 
-.step p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: #d0d4e5;
+/* The bold decade label */
+.steps .step .decade-label {
+  font-weight: 700;
+  color: #a7e3ff;     /* soft cyan for contrast */
+  margin-bottom: 0.3rem;
+  display: block;
+  font-size: 1.05rem;
 }
+
+/* Improve paragraph spacing */
+.steps .step p {
+  margin: 0.65rem 0;
+}
+
 
 /* ===== Globe appearance ===== */
 
@@ -531,4 +550,18 @@ body {
   border-radius: 999px;
   background-image: linear-gradient(to right, #171c2b, #433c8f, #2569b3, #25a17c, #b8e986);
   margin-bottom: 4px;
+}
+
+
+.explore-tooltip {
+  position: absolute;
+  background: rgba(30, 30, 30, 0.9);
+  color: white;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.15s ease;
 }

@@ -1,24 +1,22 @@
 // global.js
 const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
-
 /* =======================================
- * PART A: SCROLLYTELLING GLOBE (TOP)
+ * PART A — SCROLL-PROGRESS DRIVEN GLOBE
  * =====================================*/
 (function scrollyGlobe() {
   const container = document.getElementById("globe-container");
-  if (!container) return; // safety
+  if (!container) return;
 
+  // --- Dimensions ---
   const size = container.clientWidth || 760;
   const width = size;
   const height = size;
   const radius = Math.min(width, height) / 2 - 20;
 
-  const svg = d3
-    .select("#globe")
-    .attr("viewBox", `0 0 ${width} ${height}`);
+  // --- SVG + projection ---
+  const svg = d3.select("#globe").attr("viewBox", `0 0 ${width} ${height}`);
 
-  const projection = d3
-    .geoOrthographic()
+  const projection = d3.geoOrthographic()
     .scale(radius)
     .translate([width / 2, height / 2])
     .clipAngle(90);
@@ -28,11 +26,8 @@ const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
 
   let rotation = [0, -20];
   projection.rotate(rotation);
-  let isDragging = false;
-  let lastDragPos = null;
-  let lastRotation = null;
 
-  // water + graticule
+  // --- Layers ---
   svg.append("path")
     .datum({ type: "Sphere" })
     .attr("class", "water")
@@ -46,135 +41,141 @@ const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
   const countriesLayer = svg.append("g").attr("id", "countries-layer");
   const annotationGroup = svg.append("g").attr("id", "annotation-group");
 
-  // Regions for steps
-  // Regions for steps (approximate lon, lat)
-  const regionAnnotations = [
-    { step: 0, name: "Africa",                      coords: [20, 5] },
-    { step: 1, name: "Asia",                        coords: [90, 30] },
-    { step: 2, name: "Middle East & North Africa",  coords: [35, 25] },
-    { step: 3, name: "Europe",                      coords: [15, 50] },
-    { step: 4, name: "Latin America & the Caribbean", coords: [-70, -10] },
-    { step: 5, name: "Northern America",            coords: [-100, 40] },
-    { step: 6, name: "Oceania",                     coords: [140, -25] },
+  /* -------------------------------------
+   * REGION KEYFRAMES (IN ORDER)
+   * -------------------------------------*/
+  const keyframes = [
+    { name: "Africa", coords: [20, 5] },
+    { name: "Asia", coords: [90, 30] },
+    { name: "Middle East & North Africa", coords: [35, 25] },
+    { name: "Europe", coords: [15, 50] },
+    { name: "Latin America & the Caribbean", coords: [-70, -10] },
+    { name: "Northern America", coords: [-100, 40] },
+    { name: "Oceania", coords: [140, -25] }
   ];
-
 
   let countries = [];
 
-  d3.json(WORLD_URL)
-    .then(world => {
-      countries = topojson.feature(world, world.objects.countries).features;
-
+  // --- Load world map ---
+  d3.json(WORLD_URL).then(world => {
+    countries = topojson.feature(world, world.objects.countries).features;
     countriesLayer
-        .selectAll("path")
-        .data(countries)
-        .join("path")
-        .attr("class", "country")
-        .attr("d", path)
-        .attr("fill", "#444f7a")
-        .attr("stroke", "white")
-        .attr("stroke-width", 0.3);
+      .selectAll("path")
+      .data(countries)
+      .join("path")
+      .attr("class", "country")
+      .attr("d", path)
+      .attr("fill", "#444f7a")
+      .attr("stroke", "white")
+      .attr("stroke-width", 0.3);
 
-      addDrag();    // you can still drag manually
-      // No auto-rotation for scrolly globe
-      initScrolly();
+    setupScrollProgress();
+    addDrag();
+    render();
+  });
 
-    })
-    .catch(err => console.error("Scrolly globe world load error:", err));
+  /* -------------------------------------
+   * UPDATE PER FRAME
+   * -------------------------------------*/
+  function render() {
+    svg.selectAll("path.water").attr("d", path);
+    svg.selectAll("path.graticule").attr("d", path);
+    countriesLayer.selectAll("path").attr("d", path);
+    updateAnnotationPosition();
+  }
+
+  /* -------------------------------------
+   * DRAGGING OVERRIDES SCROLL
+   * -------------------------------------*/
+  let isDragging = false;
+  let lastDrag = null;
+  let lastRot = null;
 
   function addDrag() {
     svg.call(
       d3.drag()
         .on("start", (event) => {
           isDragging = true;
-          lastDragPos = [event.x, event.y];
-          lastRotation = rotation.slice();
+          lastDrag = [event.x, event.y];
+          lastRot = rotation.slice();
         })
         .on("drag", (event) => {
-          const dx = event.x - lastDragPos[0];
-          const dy = event.y - lastDragPos[1];
+          const dx = event.x - lastDrag[0];
+          const dy = event.y - lastDrag[1];
 
-          rotation[0] = lastRotation[0] + dx * 0.4;
-          rotation[1] = lastRotation[1] - dy * 0.4;
+          rotation = [
+            lastRot[0] + dx * 0.4,
+            lastRot[1] - dy * 0.4
+          ];
 
           projection.rotate(rotation);
           render();
         })
-        .on("end", () => {
-          isDragging = false;
-        })
+        .on("end", () => { isDragging = false; })
     );
   }
 
-  function startRotation() {
-    const velocity = 0.02;
-    d3.timer(() => {
-      if (isDragging) return;
-      rotation[0] += velocity;
+  /* -------------------------------------
+   * SCROLLPROGRESS → ROTATION
+   * -------------------------------------*/
+  function setupScrollProgress() {
+    const steps = Array.from(document.querySelectorAll(".step"));
+    const stepTops = steps.map(s => s.offsetTop);
+
+    window.addEventListener("scroll", () => {
+      if (isDragging) return; // dragging overrides scroll
+
+      const scrollY = window.scrollY + window.innerHeight * 0.5;
+      let idx = 0;
+
+      // find which two steps we are between
+      for (let i = 0; i < stepTops.length - 1; i++) {
+        if (scrollY >= stepTops[i] && scrollY < stepTops[i + 1]) {
+          idx = i;
+          break;
+        }
+      }
+
+      const startFrame = keyframes[idx];
+      const endFrame = keyframes[idx + 1] || keyframes[idx];
+
+      // compute progress from step idx → idx+1
+      const startY = stepTops[idx];
+      const endY = stepTops[idx + 1] || (startY + 800);
+      const t = Math.min(Math.max((scrollY - startY) / (endY - startY), 0), 1);
+
+      // interpolate rotation
+      const startRot = [-startFrame.coords[0], -startFrame.coords[1]];
+      const endRot   = [-endFrame.coords[0], -endFrame.coords[1]];
+
+      const rInterp = d3.interpolate(startRot, endRot);
+      rotation = rInterp(d3.easeCubicInOut(t));
+
       projection.rotate(rotation);
+      annotationGroup.datum(startFrame);
       render();
     });
+
+    // set initial annotation
+    annotationGroup.datum(keyframes[0]);
   }
 
-  function render() {
-    svg.selectAll("path.water").attr("d", path);
-    svg.selectAll("path.graticule").attr("d", path);
-    countriesLayer.selectAll("path").attr("d", path);
-    // annotation shapes re-projected in drawAnnotation
-  }
+  /* -------------------------------------
+   * ANNOTATIONS FOLLOW ROTATION
+   * -------------------------------------*/
+  function updateAnnotationPosition() {
+    const region = annotationGroup.datum();
+    if (!region) return;
 
-  // Scrollytelling using IntersectionObserver
-  function initScrolly() {
-    const steps = document.querySelectorAll(".step");
-    if (!steps.length) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          const el = entry.target;
-          const stepIndex = +el.dataset.step;
-
-          steps.forEach((s) => s.classList.toggle("is-active", s === el));
-          activateStep(stepIndex);
-        });
-      },
-      {
-        root: null,
-        threshold: 0.6,
-      }
-    );
-
-    steps.forEach((step) => observer.observe(step));
-    activateStep(0);
-  }
-
-  function activateStep(stepIndex) {
-    const region = regionAnnotations.find((r) => r.step === stepIndex);
-    if (!region) {
-      annotationGroup.selectAll("*").remove();
-      return;
-    }
-
-    const [lon, lat] = region.coords;
-    rotation = [-lon, -lat];
-    projection.rotate(rotation);
-
-    svg.selectAll("path.water").attr("d", path);
-    svg.selectAll("path.graticule").attr("d", path);
-    countriesLayer.selectAll("path").attr("d", path);
-
-    drawAnnotation(region);
-  }
-
-  function drawAnnotation(region) {
     annotationGroup.selectAll("*").remove();
 
-    const [x, y] = projection(region.coords);
-    if (!isFinite(x) || !isFinite(y)) return;
+    const projected = projection(region.coords);
+    if (!projected) return;
 
-    const labelOffsetX = 80;
-    const labelOffsetY = -30;
+    const [x, y] = projected;
+
+    const labelOffsetX = 70;
+    const labelOffsetY = -25;
 
     annotationGroup
       .append("circle")
@@ -199,7 +200,6 @@ const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
       .text(region.name);
   }
 })();
-
 
 
 /* =======================================
@@ -246,6 +246,28 @@ const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
     .attr("d", path);
 
   const countriesLayer = svg.append("g").attr("id", "explore-countries");
+  const tooltip = document.getElementById("explore-tooltip");
+
+countriesLayer
+  .selectAll("path.country")
+  .on("mousemove", (event, d) => {
+    const name = d.properties && d.properties.name;
+    const v = getValue(name, currentDecade, currentMetric);
+
+    tooltip.style.opacity = 1;
+    tooltip.style.left = event.pageX + 15 + "px";
+    tooltip.style.top = event.pageY + 15 + "px";
+
+    tooltip.innerHTML = `
+      <strong>${name}</strong><br>
+      ${prettyMetricLabel(currentMetric)}:<br>
+      <strong>${v == null ? "No data" : d3.format(".2f")(v)}</strong>
+    `;
+  })
+  .on("mouseleave", () => {
+    tooltip.style.opacity = 0;
+  });
+
 
   // Controls & legend
   const metricSelect = document.getElementById("metric-select");
@@ -263,24 +285,20 @@ const WORLD_URL = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.jso
     !legendBar ||
     !countryStatsEl
   ) {
-    console.warn("Explore controls, legend, or stats panel missing, skipping explore globe.");
+    console.warn(
+      "Explore controls, legend, or stats panel missing, skipping explore globe."
+    );
     return;
   }
 
-  // ✨ Elegant color scale for navy background:
-  // deep navy → teal → warm gold
-const elegantInterpolator = t =>
-  d3.interpolateRgbBasis([
-    "#f28e84", // soft coral
-    "#f2d675",  // gold
-    "#18a6a6",   // teal    
-  ])(t);
-
+  // Color scale
+  const elegantInterpolator = (t) =>
+    d3.interpolateRgbBasis(["#f28e84", "#f2d675", "#18a6a6"])(t);
 
   const colorScale = d3.scaleSequential(elegantInterpolator);
 
   let countries = [];
-  let dataByNameDecade = null;  // 🔑 keyed by Country Name
+  let dataByNameDecade = null; // keyed by Country Name
   let metricColumns = [];
   let decades = [];
   let currentMetric = null;
@@ -289,17 +307,16 @@ const elegantInterpolator = t =>
   // Map year -> decade label like "1970-1979"
   function decadeLabelFromYear(year) {
     if (year == null || isNaN(year)) return null;
-    if (year < 1970) return null; // ignore pre-1970 for the UI
+    if (year < 1970) return null;
     const start = Math.floor(year / 10) * 10;
     const end = start + 9;
     return `${start}-${end}`;
   }
 
-  // 1️⃣ Always load world + draw countries first
+  // 1️⃣ Load world map first
   d3.json(WORLD_URL)
-    .then(world => {
+    .then((world) => {
       countries = topojson.feature(world, world.objects.countries).features;
-      console.log("Explore globe: countries loaded:", countries.length);
 
       countriesLayer
         .selectAll("path")
@@ -307,86 +324,76 @@ const elegantInterpolator = t =>
         .join("path")
         .attr("class", "country")
         .attr("d", path)
-        .attr("fill", "#444f7a")    // base color before data
+        .attr("fill", "#444f7a")
         .attr("stroke", "white")
         .attr("stroke-width", 0.3)
-        .on("click", (event, d) => onCountryClick(d));  // ⭐ click handler
+        .on("click", (event, d) => onCountryClick(d));
 
       addDrag();
       startRotation();
       render();
 
-      // 2️⃣ Then load gender.csv to build the decade-based choropleth
       loadGenderData();
     })
-    .catch(err => {
-      console.error("Explore globe world load error:", err);
-    });
+    .catch((err) =>
+      console.error("Explore globe world load error:", err)
+    );
 
+  // 2️⃣ Load gender data
   function loadGenderData() {
     d3.csv("data/gender.csv", d3.autoType)
-      .then(data => {
-        console.log("Explore globe: gender.csv rows:", data.length);
-
-        // Attach decade label to each row (only from 1970+)
+      .then((data) => {
         const filtered = data
-          .map(d => {
-            const decLabel = decadeLabelFromYear(d.Year);
-            return decLabel ? { ...d, Decade: decLabel } : null;
+          .map((d) => {
+            const dec = decadeLabelFromYear(d.Year);
+            return dec ? { ...d, Decade: dec } : null;
           })
-          .filter(d => d !== null);
+          .filter((d) => d !== null);
 
-        // 🔑 Rollup: Country Name -> Decade -> rows
         dataByNameDecade = d3.rollup(
           filtered,
-          v => v,
-          d => d["Country Name"],
-          d => d.Decade
+          (v) => v,
+          (d) => d["Country Name"],
+          (d) => d.Decade
         );
 
-        // Metric columns
-        metricColumns = data.columns.filter(c => c.startsWith("average_value_"));
-        if (!metricColumns.length) {
-          console.warn("No metric columns starting with 'average_value_' in gender.csv");
-        }
+        metricColumns = data.columns.filter((c) =>
+          c.startsWith("average_value_")
+        );
 
         const preferredMetric =
-          metricColumns.find(c =>
-            c.toLowerCase().includes("life expectancy at birth, female (years)")
+          metricColumns.find((c) =>
+            c.toLowerCase().includes(
+              "life expectancy at birth, female (years)"
+            )
           ) || metricColumns[0];
 
         currentMetric = preferredMetric;
 
-        // Decades present in the data (1970+), sorted chronologically
-        decades = Array.from(
-          new Set(filtered.map(d => d.Decade))
-        ).sort((a, b) => {
-          const aStart = parseInt(a.split("-")[0], 10);
-          const bStart = parseInt(b.split("-")[0], 10);
-          return aStart - bStart;
-        });
+        decades = Array.from(new Set(filtered.map((d) => d.Decade))).sort(
+          (a, b) =>
+            parseInt(a.split("-")[0]) - parseInt(b.split("-")[0])
+        );
 
-        currentDecade = decades[decades.length - 1]; // latest decade
+        currentDecade = decades[decades.length - 1];
 
         setupControls();
         updateChoropleth();
       })
-      .catch(err => {
-        console.error("Explore globe gender.csv load error:", err);
-        // If CSV fails, we still keep the plain globe.
-      });
+      .catch((err) =>
+        console.error("Explore globe gender.csv load error:", err)
+      );
   }
 
   function setupControls() {
-    // Metric dropdown
     metricSelect.innerHTML = "";
-    metricColumns.forEach(col => {
+    metricColumns.forEach((col) => {
       const opt = document.createElement("option");
       opt.value = col;
       opt.textContent = prettyMetricLabel(col);
       metricSelect.appendChild(opt);
     });
-    if (currentMetric) metricSelect.value = currentMetric;
+    metricSelect.value = currentMetric;
 
     metricSelect.addEventListener("change", () => {
       currentMetric = metricSelect.value;
@@ -394,15 +401,14 @@ const elegantInterpolator = t =>
       clearCountryStats(false);
     });
 
-    // Decade dropdown
     decadeSelect.innerHTML = "";
-    decades.forEach(dec => {
+    decades.forEach((dec) => {
       const opt = document.createElement("option");
       opt.value = dec;
-      opt.textContent = dec; // e.g. "1970-1979"
+      opt.textContent = dec;
       decadeSelect.appendChild(opt);
     });
-    if (currentDecade) decadeSelect.value = currentDecade;
+    decadeSelect.value = currentDecade;
 
     decadeSelect.addEventListener("change", () => {
       currentDecade = decadeSelect.value;
@@ -426,7 +432,8 @@ const elegantInterpolator = t =>
 
   function addDrag() {
     svg.call(
-      d3.drag()
+      d3
+        .drag()
         .on("start", (event) => {
           isDragging = true;
           lastDragPos = [event.x, event.y];
@@ -435,10 +442,8 @@ const elegantInterpolator = t =>
         .on("drag", (event) => {
           const dx = event.x - lastDragPos[0];
           const dy = event.y - lastDragPos[1];
-
           rotation[0] = lastRotation[0] + dx * 0.4;
           rotation[1] = lastRotation[1] - dy * 0.4;
-
           projection.rotate(rotation);
           render();
         })
@@ -451,96 +456,83 @@ const elegantInterpolator = t =>
   function startRotation() {
     const velocity = 0.01;
     d3.timer(() => {
-      if (isDragging) return;
-      rotation[0] += velocity;
-      projection.rotate(rotation);
-      render();
+      if (!isDragging) {
+        rotation[0] += velocity;
+        projection.rotate(rotation);
+        render();
+      }
     });
   }
 
-  function render() {
-    svg.selectAll("path.water").attr("d", path);
-    svg.selectAll("path.graticule").attr("d", path);
-    countriesLayer.selectAll("path.country").attr("d", path);
-  }
+function render() {
+  svg.selectAll("path.water").attr("d", path);
+  svg.selectAll("path.graticule").attr("d", path);
+  countriesLayer.selectAll("path.country").attr("d", path);
+}
 
-  // Get metric value for a given country-name + decade (average across all years in that decade)
+
+  // Get metric value for a given country and decade
   function getValue(countryName, decade, metric) {
-    if (!countryName || !metric || !dataByNameDecade) return null;
-    const byDecade = dataByNameDecade.get(countryName);
-    if (!byDecade) return null;
-    const rows = byDecade.get(decade);
+    const byDec = dataByNameDecade.get(countryName);
+    if (!byDec) return null;
+
+    const rows = byDec.get(decade);
     if (!rows || !rows.length) return null;
 
     const vals = rows
-      .map(r => r[metric])
-      .filter(v => v != null && !isNaN(v));
+      .map((r) => r[metric])
+      .filter((v) => v != null && !isNaN(v));
 
-    if (!vals.length) return null;
-    return d3.mean(vals);
+    return vals.length ? d3.mean(vals) : null;
   }
 
   function updateChoropleth() {
-    if (!countries.length || !currentMetric || !currentDecade || !dataByNameDecade) return;
+    if (!countries.length || !currentMetric || !currentDecade) return;
 
     const vals = [];
-    countries.forEach(d => {
+    countries.forEach((d) => {
       const name = d.properties && d.properties.name;
-      if (!name) return;
       const v = getValue(name, currentDecade, currentMetric);
-      if (v != null && !isNaN(v)) vals.push(v);
+      if (v != null) vals.push(v);
     });
 
-    if (!vals.length) {
-      console.warn("No data values for metric", currentMetric, "decade", currentDecade);
-      return;
-    }
+    if (!vals.length) return;
 
     const extent = d3.extent(vals);
     colorScale.domain(extent);
 
-    // 🗺️ Color countries using the metric scale
-    countriesLayer
-      .selectAll("path.country")
-      .attr("fill", d => {
-        const name = d.properties && d.properties.name;
-        if (!name) return "#444f7a";
-        const v = getValue(name, currentDecade, currentMetric);
-        if (v == null || isNaN(v)) return "#444f7a"; // fallback color
-        return colorScale(v);
-      });
+countriesLayer
+  .selectAll("path.country")
+  .attr("fill", d => {
+    const name = d.properties && d.properties.name;
+    const v = getValue(name, currentDecade, currentMetric);
+    return v == null ? "#444f7a" : colorScale(v);
+  });
 
-    // 🔢 Legend labels
-    const format = d3.format(".2f");
-    legendMin.textContent = format(extent[0]);
-    legendMax.textContent = format(extent[1]);
+    const fmt = d3.format(".2f");
+    legendMin.textContent = fmt(extent[0]);
+    legendMax.textContent = fmt(extent[1]);
 
-    // 🎨 Legend gradient that matches the colorScale
-    const [min, max] = extent;
-    const stopsCount = 7;
-    const stops = d3.range(stopsCount).map(i => {
-      const t = i / (stopsCount - 1);      // 0 → 1
-      const value = min + t * (max - min); // map to [min, max]
+    const [minV, maxV] = extent;
+    const stops = d3.range(7).map((i) => {
+      const t = i / 6;
+      const value = minV + t * (maxV - minV);
       return colorScale(value);
     });
 
-    legendBar.style.backgroundImage =
-      `linear-gradient(to right, ${stops.join(",")})`;
+    legendBar.style.backgroundImage = `linear-gradient(to right, ${stops.join(
+      ","
+    )})`;
 
     render();
   }
 
-  /* ===== Click handler to show stats ===== */
-
+  // Click handler for showing stats
   function onCountryClick(feature) {
-    if (!dataByNameDecade || !currentMetric || !currentDecade) {
-      clearCountryStats(true, "Data not loaded yet.");
-      return;
-    }
-
-    const name = feature.properties && feature.properties.name
-      ? feature.properties.name
-      : "Unknown country";
+    const name =
+      feature.properties && feature.properties.name
+        ? feature.properties.name
+        : "Unknown country";
 
     const byDec = dataByNameDecade.get(name);
     if (!byDec) {
@@ -556,8 +548,8 @@ const elegantInterpolator = t =>
 
     const metricLabel = prettyMetricLabel(currentMetric);
     const vals = rows
-      .map(r => r[currentMetric])
-      .filter(v => v != null && !isNaN(v));
+      .map((r) => r[currentMetric])
+      .filter((v) => v != null && !isNaN(v));
 
     if (!vals.length) {
       clearCountryStats(
@@ -567,35 +559,40 @@ const elegantInterpolator = t =>
       return;
     }
 
-    const format = d3.format(".2f");
     const avg = d3.mean(vals);
     const min = d3.min(vals);
     const max = d3.max(vals);
-    const years = Array.from(new Set(rows.map(r => r.Year))).sort((a, b) => a - b);
+    const years = Array.from(
+      new Set(rows.map((r) => r.Year))
+    ).sort((a, b) => a - b);
 
-    const html = `
+    const fmt = d3.format(".2f");
+
+    countryStatsEl.classList.remove("country-stats--empty");
+    countryStatsEl.innerHTML = `
       <div class="country-stats-header">
         <div class="country-stats-name">${name}</div>
         <div class="country-stats-decade">${currentDecade}</div>
       </div>
+
       <div class="country-stats-metric">${metricLabel}</div>
 
       <div class="country-stats-value-row">
         <span class="country-stats-label">Average:</span>
-        <span class="country-stats-value">${format(avg)}</span>
+        <span class="country-stats-value">${fmt(avg)}</span>
       </div>
+
       <div class="country-stats-value-row">
         <span class="country-stats-label">Range:</span>
-        <span class="country-stats-value">${format(min)} – ${format(max)}</span>
+        <span class="country-stats-value">${fmt(min)} – ${fmt(
+      max
+    )}</span>
       </div>
 
       <div class="country-stats-notes">
         Based on ${years.length} year(s) of data: ${years.join(", ")}.
       </div>
     `;
-
-    countryStatsEl.classList.remove("country-stats--empty");
-    countryStatsEl.innerHTML = html;
   }
 
   function clearCountryStats(showPlaceholder = true, message = null) {
